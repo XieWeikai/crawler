@@ -1,0 +1,11 @@
+*.html
+
+**/*.jpeg
+**/*.jpg
+**/*.png
+.idea
+test.py
+
+**/__pycache__/*
+
+data/*
