@@ -27,11 +27,14 @@ def add_baidu_img(graph,label,key,limit,attr_name,additional_search_key):
     except OSError:
         print('%s directory already exists'%data_path)
 
-    nodes = graph.nodes.match(label).limit(limit)
-    for node in tqdm(nodes):
-        # print(f'node["{key}"]:{node[key]}')
+    nodes = tqdm(graph.nodes.match(label).limit(limit), desc='downloading images')
+
+    for node in nodes:
+        if 'img' in node:  # already has img attribute
+            continue
+        nodes.set_postfix_str(f'handling :{node[key]}')
         img = baidu.baidu_img(f'{node[key]} {additional_search_key}')
-        for meta, content in img.get_imgs(1):
+        for meta, content in img.get_imgs(1, img=config.img_from):
             md5 = hashlib.md5()
             md5.update(content)
             file_name = md5.hexdigest() + '.' + meta['type']
@@ -41,7 +44,6 @@ def add_baidu_img(graph,label,key,limit,attr_name,additional_search_key):
 
             node[attr_name] = file_name
             graph.push(node)
-        # print('done\n')
 
 if __name__ == '__main__':
     add_baidu_img(graph,node_label,node_key,limit_num,'img',add_keyword)

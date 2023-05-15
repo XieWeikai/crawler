@@ -6,10 +6,10 @@ from imgspider import config
 
 last_proxy = None
 
-def get_proxy():
+def get_proxy(retry = 10):
     if random.random() <= 0.1:
         return None
-    while True:
+    for cnt in range(retry):
         j = requests.get("http://127.0.0.1:5010/get/").json()
         if j.get('fail_count') == 0:
             return j.get('proxy')
@@ -17,6 +17,8 @@ def get_proxy():
         if config.random_interval:
             interval *= random.random() * 2
         time.sleep(interval)
+
+    return None
 
 
 def delete_proxy(proxy):

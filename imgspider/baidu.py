@@ -3,7 +3,7 @@ import re
 
 import requests
 import fake_useragent
-import proxy
+from imgspider import proxy
 
 url = 'https://image.baidu.com/search/acjson'  # baidu 图片api
 

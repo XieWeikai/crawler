@@ -33,7 +33,7 @@ uri = "bolt://localhost:7687"
 auth = ("neo4j", "123456")
 
 # 使用py2neo match某个标签时最大返回标签数
-limit = 100
+limit = 8807
 
 # 要添加图片属性的节点标签
 node_label = '疾病'
