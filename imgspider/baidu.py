@@ -2,6 +2,8 @@ import os
 import re
 
 import requests
+import fake_useragent
+import proxy
 
 url = 'https://image.baidu.com/search/acjson'  # baidu 图片api
 
@@ -71,7 +73,8 @@ class baidu_img(object):
         p['word'] = self.key_word
         p['queryWord'] = self.key_word
         p['rn'] = str(num)
-        r = requests.get(url,params=p,headers=headers)
+        headers['User-Agent'] = fake_useragent.UserAgent().random
+        r = proxy.get(url,params=p,headers=headers)
         try:
             data = r.json()['data']
         except requests.exceptions.JSONDecodeError as e:
