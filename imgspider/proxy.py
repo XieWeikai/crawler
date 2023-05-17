@@ -6,12 +6,28 @@ from imgspider import config
 
 last_proxy = None
 
-def get_proxy(retry = 10):
+used = {}
+
+
+def delete_proxy(proxy):
+    requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
+
+
+def get_proxy(retry = 10, max_use_num = 10):
+    global used
+
     if random.random() <= 0.1:
         return None
     for cnt in range(retry):
         j = requests.get("http://127.0.0.1:5010/get/").json()
         if j.get('fail_count') == 0:
+            proxy = j.get('proxy')
+            if proxy not in used:
+                used[proxy] = 0
+            used[proxy] = used[proxy] + 1
+            if used[proxy] >= max_use_num:
+                used[proxy] = 0
+                delete_proxy(proxy)
             return j.get('proxy')
         interval = config.get_proxy_interval
         if config.random_interval:
@@ -19,10 +35,6 @@ def get_proxy(retry = 10):
         time.sleep(interval)
 
     return None
-
-
-def delete_proxy(proxy):
-    requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
 
 
 def get(*args, **kwargs):
@@ -41,7 +53,6 @@ def get(*args, **kwargs):
                 resp = requests.get(*args, **kwargs)
             else:
                 resp = requests.get(*args, proxies={"http": "http://{}".format(proxy)}, **kwargs)
-                delete_proxy(proxy)
 
             last_proxy = proxy
             break

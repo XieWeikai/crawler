@@ -83,6 +83,9 @@ class baidu_img(object):
             print(r.text)
             print('\n')
             return
+        except Exception as e:
+            print(e)
+            return
 
         for item in data:
             if item:
